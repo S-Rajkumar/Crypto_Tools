@@ -5,6 +5,10 @@ author : udmnxpdu
 date   : July 2020
 '''
 
+import base62
+import base64
+import base58
+
 class Crypto_Tools :
     """ This Class contains cryptographics tools ( decoder and encoder )
     1.decode_phone_code(cipherText)
@@ -20,7 +24,7 @@ class Crypto_Tools :
         Example :
             bin_code : 010111000000000110
             DNA code : GGTAAAAGC
-    
+	    
     3.decode_dna_code(dna_code)
         dna_code -> <string>
         returns => plain_text <string>
@@ -41,7 +45,76 @@ class Crypto_Tools :
         Example :
             DNA_code : GGTAAAAGC
             Binary_DNA_code : 010111000000000110
-                   
+	    
+    6.encode_base64(plain_text)
+	plain_text -> <string>
+	return => base64_encoded_text <string>
+	Example :
+	    plain_text : Raj
+	    base64_encoded_text : UmFq
+	    
+    7.decode_base64(base64_encoded_text)
+	base64_encoded_text -> <string>
+	return => plain_text <string>
+	Example :
+	    base64_encoded_text : UmFq
+	    plain_text : Raj
+	    
+    8.encode_base32(plain_text)
+	plain_text -> <string>
+	return => base32_encoded_text
+	Example :
+	    plain_text : Raj
+	    base32_encoded_text : KJQWU===
+	    
+    9.decode_base32(base32_encoded_text)
+	base32_encoded_text -> <string>
+	return => plain_text <string>
+	Example :
+	    base32_encoded_text : KJQWU===
+	    plain_text : Raj
+	    
+   10.encode_base58(plain_text)
+	plain_text -> <string>
+	return => base58_encoded_text <string>
+	Example :
+	    plain_text : Raj
+	    base58_encoded_text : UfuK
+	    
+   11.decode_base58(base58_encoded_text)
+	base58_encoded_text -> <string>
+	return => plain_text <string>
+	Example :
+	    base58_encoded_text : UfuK
+	    plain_text : Raj
+	    
+   12.encode_base36(plain_text)
+	plain_text -> <string>
+	return => base36_encoded_text <int>
+	Example :
+	    plain_text : Raj
+	    base36_encoded_text : 35371
+	    
+   13.decode_base36(base36_encoded_text)
+	base36_encoded_text -> <int>
+	return => plain_text <string>
+	Example :
+	    base36_encoded_text : 35371
+	    plain_text : Raj
+	    
+   14.encode_base62(plain_text)
+	plain_text -> <string>
+	return => base62_encoded_text <string>
+	Example :
+	    plain_text = : Raj
+	    base62_encoded_text : MeUs
+	    
+   15.decode_base62(base62_encoded_text)
+	base62_encoded_text -> <string>
+	return => plain_text <string>
+	Example :
+	    base62_encoded_text : MeUs
+	    plain_text : Raj
     """
     
     phone_pad_map = {
@@ -97,9 +170,45 @@ class Crypto_Tools :
             result += tmp_dna_bin_code_map[dna_code[i]]
         return result
         
-    def encode_dna_code(self,string) :
+    def encode_dna_code(self,plain_text) :
         tmp_dna_code_map = { value:key for key,value in self.dna_code_map.items() }
         result = ""
-        for i in range(0,len(string)) :
-            result += tmp_dna_code_map[string[i]]
+        for i in range(0,len(plain_text)) :
+            result += tmp_dna_code_map[plain_text[i]]
         return result
+	
+    def encode_base64(self,plain_text) :
+        return base64.b64encode(plain_text.encode('utf-8')).decode('utf-8')
+	
+    def decode_base64(self,b64_encoded_text) :
+        return base64.b64decode(b64_encoded_text).decode('utf-8')
+	
+    def encode_base32(self,plain_text) :
+        return base64.b32encode(plain_text.encode('utf-8')).decode('utf-8')
+	
+    def decode_base32(self,b32_encoded_text) :
+        return base64.b32decode(b32_encoded_text).decode('utf-8')
+	
+    def encode_base58(self,plain_text) :
+        return base58.b58encode(plain_text).decode('utf-8')
+	
+    def decode_base58(self,b58_encoded_text) :
+        return base58.b58decode(b58_encoded_text).decode('utf-8')
+	
+    def encode_base36(self,plain_text) :
+        return int(plain_text, 36)
+	
+    def decode_base36(self,b36_encoded_text) :
+        base36_alpha = '0123456789abcdefghijklmnopqrstuvwxyz'
+        result = ''
+        while b36_encoded_text != 0 :
+            b36_encoded_text, index = divmod(b36_encoded_text,36)
+            result = base36_alpha[index] + result
+        return result
+	
+    def encode_base62(self,plain_text) :
+        return base62.encodebytes(plain_text.encode('ascii'))
+	
+    def decode_base62(self,b62_encoded_text) :
+        return base62.decodebytes(b62_encoded_text).decode('ascii')
+	
